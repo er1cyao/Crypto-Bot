@@ -31,33 +31,34 @@ def read_token():
 token = read_token()
 
 s = Screener()
-data = s.get_screeners('all_cryptocurrencies_us', count = 250)
+data = s.get_screeners('all_cryptocurrencies_us', count=250)
+
 dicts = data['all_cryptocurrencies_us']['quotes']
 symbols = [d['symbol'] for d in dicts]
+symbols
 
+crydata = yf.download(symbols, start = past, end = now)
 
 class Crypto:
     def __init__(self,name):
         self.name = name.lower()
     
     def generate_graph(name):
-        cryptocurrencies = symbols
-        crydata = yf.download(cryptocurrencies, start = past, end = now)
         cry_adjclose = crydata['Adj Close']
 
-        if name in cryptocurrencies:
-            plot = plt.plot(cry_adjclose[name])
+        if name in symbols:
+            plt.plot(cry_adjclose[name])
+            image_name = name 
+            plt.savefig(image_name)
+            return(image_name + ".png")
+            
             
     def generate_name(input):
         if input in symbols:
             return input
        
         
-
-
-
-
-
+# events for the bot to process and run
 @client.event
 async def on_ready():
     print('Connected!')
@@ -69,6 +70,7 @@ async def on_message(message):
     
     for i in symbols:
         if message.content.startswith("!" + i):
+            await message.channel.send(file = discord.File(str(Crypto.generate_graph(i))))
             print("working")
 
 
