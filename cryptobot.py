@@ -48,23 +48,34 @@ class Crypto:
         if name in cryptocurrencies:
             plot = plt.plot(cry_adjclose[name])
             
-        
+    def generate_name(input):
+        if input in symbols:
+            return input
        
         
-Crypto.generate_graph("BTC-USD")
+
+
+
 
 
 @client.event
 async def on_ready():
     print('Connected!')
 
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    
+    for i in symbols:
+        if message.content.startswith("!" + i):
+            print("working")
 
 
 
 
 
-
-
+client.run(token)
 
 
 
