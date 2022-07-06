@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from pycoingecko import CoinGeckoAPI
 from datetime import datetime
 from yahooquery import Screener
+import yahoo_fin.stock_info as si
+
 
 client = discord.Client()
 now = datetime.now()
@@ -31,21 +33,20 @@ def read_token():
 token = read_token()
 
 s = Screener()
-data = s.get_screeners('all_cryptocurrencies_us', count=250)
+data = s.get_screeners('all_cryptocurrencies_us', count=200)
 
 dicts = data['all_cryptocurrencies_us']['quotes']
 symbols = [d['symbol'] for d in dicts]
 symbols
 
 crydata = yf.download(symbols, start = past, end = now)
-
+cry_adjclose = crydata['Adj Close']
+returns = crydata['Adj Close'].pct_change()
 class Crypto:
     def __init__(self,name):
         self.name = name.lower()
     
     def generate_graph(name):
-        cry_adjclose = crydata['Adj Close']
-
         if name in symbols:
             plt.plot(cry_adjclose[name])
             image_name = name 
@@ -53,11 +54,18 @@ class Crypto:
             return(image_name + ".png")
             
             
-    def generate_name(input):
-        if input in symbols:
-            return input
-       
+    def generate_returns(name):
         
+        plt.plot(returns[name])
+        plt.savefig(name + "returns")
+        return(name + "returns.png")
+    
+    def compare_cumulative(first, second):
+        cum_returns = ((1 + crydata['Adj Close'].pct_change()).cumprod() - 1) * 100
+
+
+   
+
 # events for the bot to process and run
 @client.event
 async def on_ready():
@@ -73,7 +81,8 @@ async def on_message(message):
             await message.channel.send(file = discord.File(str(Crypto.generate_graph(i))))
             print("working")
 
-
+        if message.content.startswith("!returns " + i):
+            await message.channel.send(file = discord.File(str(Crypto.generate_returns(i))))
 
 
 
