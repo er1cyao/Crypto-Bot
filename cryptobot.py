@@ -14,7 +14,7 @@ import yahoo_fin.stock_info as si
 
 client = discord.Client()
 now = datetime.now()
-removeYear = now.year - 10
+removeYear = now.year - 5
 current_date = datetime.today().strftime('%Y-%m-%d')
 date_arr = current_date.split('-')
 past = str(removeYear) + '-' + date_arr[1] + '-' + date_arr[2]
@@ -54,17 +54,21 @@ class Crypto:
             return(image_name + ".png")
             
             
-    def generate_returns(name):
-        
+    def generate_returns(name):        
         plt.plot(returns[name])
         plt.savefig(name + "returns")
         return(name + "returns.png")
     
     def compare_cumulative(first, second):
-        cum_returns = ((1 + crydata['Adj Close'].pct_change()).cumprod() - 1) * 100
+        arr = [first,second]
+        if first and second in symbols:
+            com_data = yf.download(arr, start = past, end = now)
+            cum_returns = ((1 + com_data['Adj Close'].pct_change()).cumprod() - 1) * 100
+            cum_returns.plot(figsize = (20,6))
+            plt.title(first + " " + second + " Cumulative Returns")
+            plt.savefig(first + "_" + second)
+            return(first + "_" + second + ".png")
 
-
-   
 
 # events for the bot to process and run
 @client.event
@@ -83,13 +87,13 @@ async def on_message(message):
 
         if message.content.startswith("!returns " + i):
             await message.channel.send(file = discord.File(str(Crypto.generate_returns(i))))
-
+    for i in symbols:
+        for j in symbols:
+            if message.content.startswith("!cumulative" + i + " " + j):
+                await message.channel.send(file = discord.File(str(Crypto.compare_cumulative(i,j))))
 
 
 client.run(token)
-
-
-
 
 
 
