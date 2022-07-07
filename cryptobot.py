@@ -49,6 +49,7 @@ class Crypto:
     def generate_graph(name):
         if name in symbols:
             plt.plot(cry_adjclose[name])
+            plt.title(name)
             image_name = name 
             plt.savefig(image_name)
             return(image_name + ".png")
@@ -56,6 +57,7 @@ class Crypto:
             
     def generate_returns(name):        
         plt.plot(returns[name])
+        plt.title(name)
         plt.savefig(name + "returns")
         return(name + "returns.png")
     
@@ -69,6 +71,13 @@ class Crypto:
             plt.savefig(first + "_" + second)
             return(first + "_" + second + ".png")
 
+    def generate_heatmap(first, second, third, fourth):
+        heat = [first, second, third, fourth]
+        if first and second and third and fourth in symbols:
+            heat_data = yf.download(heat, start = past, end =now)
+            heat_corr = (((1 + heat_data['Adj Close'].pct_change()).cumprod() - 1) * 100).corr()
+            sns.heatmap(heat_corr, annot = True, cmap = 'coolwarm')
+            plt.title("Heat Map of Selected Cryptocurrencies")
 
 # events for the bot to process and run
 @client.event
@@ -87,6 +96,7 @@ async def on_message(message):
 
         if message.content.startswith("!returns " + i):
             await message.channel.send(file = discord.File(str(Crypto.generate_returns(i))))
+            
     for i in symbols:
         for j in symbols:
             if message.content.startswith("!cumulative" + i + " " + j):
