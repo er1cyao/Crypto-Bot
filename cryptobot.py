@@ -12,7 +12,7 @@ from yahooquery import Screener
 import yahoo_fin.stock_info as si
 
 
-client = discord.Client()
+
 now = datetime.now()
 removeYear = now.year - 5
 current_date = datetime.today().strftime('%Y-%m-%d')
@@ -23,7 +23,7 @@ past = str(removeYear) + '-' + date_arr[1] + '-' + date_arr[2]
 intents = discord.Intents.all()
 intents.members = True 
 intents.presences = True
-bot = commands.Bot(command_prefix='!', intents = intents)
+client= commands.Bot(command_prefix='!', intents = intents)
 
 def read_token():
     with open('bot.txt', 'r') as f:
@@ -71,13 +71,15 @@ class Crypto:
             plt.savefig(first + "_" + second)
             return(first + "_" + second + ".png")
 
-    def generate_heatmap(first, second, third, fourth):
-        heat = [first, second, third, fourth]
-        if first and second and third and fourth in symbols:
+    def generate_heatmap(arr):
+        heat = arr
+        if arr[0] and arr[1] and arr[2] and arr[3] in symbols:
             heat_data = yf.download(heat, start = past, end =now)
             heat_corr = (((1 + heat_data['Adj Close'].pct_change()).cumprod() - 1) * 100).corr()
             sns.heatmap(heat_corr, annot = True, cmap = 'coolwarm')
             plt.title("Heat Map of Selected Cryptocurrencies")
+            plt.savefig("HeatMap" +str(arr))
+            return("HeatMap")
 
 # events for the bot to process and run
 @client.event
@@ -101,6 +103,26 @@ async def on_message(message):
         for j in symbols:
             if message.content.startswith("!cumulative" + i + " " + j):
                 await message.channel.send(file = discord.File(str(Crypto.compare_cumulative(i,j))))
+
+@client.command(name = "command")
+async def command(ctx):
+    await ctx.send("enter four cryptocurrencies for heatmap comparisons")
+    
+    def split_string(string):
+        a = string.split(",")
+        return a
+
+
+    def check(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel and \
+        split_string(msg)[0] in symbols and  split_string(msg)[1] in symbols and split_string(msg)[2] in symbols and \
+        split_string(msg)[3] in symbols
+        
+    msg = await client.wait_for("message", check = check)
+    if msg.content() in symbols:
+        await ctx.send('yes')
+    else:
+        await ctx.send('no')
 
 
 client.run(token)
