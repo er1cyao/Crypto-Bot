@@ -12,6 +12,7 @@ from yahooquery import Screener
 import yahoo_fin.stock_info as si
 
 
+client= commands.Bot(command_prefix='!')
 
 now = datetime.now()
 removeYear = now.year - 5
@@ -19,11 +20,6 @@ current_date = datetime.today().strftime('%Y-%m-%d')
 date_arr = current_date.split('-')
 past = str(removeYear) + '-' + date_arr[1] + '-' + date_arr[2]
 
-
-intents = discord.Intents.all()
-intents.members = True 
-intents.presences = True
-client= commands.Bot(command_prefix='!', intents = intents)
 
 def read_token():
     with open('bot.txt', 'r') as f:
@@ -79,7 +75,7 @@ class Crypto:
             sns.heatmap(heat_corr, annot = True, cmap = 'coolwarm')
             plt.title("Heat Map of Selected Cryptocurrencies")
             plt.savefig("HeatMap" +str(arr))
-            return("HeatMap")
+            return("HeatMap" +str(arr) +".png")
 
 # events for the bot to process and run
 @client.event
@@ -103,26 +99,34 @@ async def on_message(message):
         for j in symbols:
             if message.content.startswith("!cumulative" + i + " " + j):
                 await message.channel.send(file = discord.File(str(Crypto.compare_cumulative(i,j))))
+    
+    await client.process_commands(message)
 
-@client.command(name = "command")
-async def command(ctx):
+@client.command()
+async def test(ctx,arg):
+    await ctx.channel.send(arg)
+
+@client.command()
+async def heatmap(ctx):
+
     await ctx.send("enter four cryptocurrencies for heatmap comparisons")
     
     def split_string(string):
         a = string.split(",")
         return a
+    
+    def check_author(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel
 
+    response = await client.wait_for("message",check=check_author)
+    values_given = split_string(response.content)
 
-    def check(msg):
-        return msg.author == ctx.author and msg.channel == ctx.channel and \
-        split_string(msg)[0] in symbols and  split_string(msg)[1] in symbols and split_string(msg)[2] in symbols and \
-        split_string(msg)[3] in symbols
-        
-    msg = await client.wait_for("message", check = check)
-    if msg.content() in symbols:
-        await ctx.send('yes')
+    if (values_given)[0] in symbols and  (values_given)[1] in symbols and (values_given)[2] in symbols and \
+    (values_given)[3] in symbols:    
+        await ctx.send(file = discord.File(str(Crypto.generate_heatmap(values_given))))
+    
     else:
-        await ctx.send('no')
+        await ctx.send("Please choose four viable cryptocurrencies")
 
 
 client.run(token)
