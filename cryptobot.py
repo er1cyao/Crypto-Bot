@@ -76,6 +76,132 @@ class Crypto:
             plt.title("Heat Map of Selected Cryptocurrencies")
             plt.savefig("HeatMap" +str(arr))
             return("HeatMap" +str(arr) +".png")
+    
+    def generate_moving_average(arr,duration):
+        mov_avg = arr
+        if arr[0] and arr[1] and arr[2] and arr[3] in symbols:
+            mov_avg_data = yf.download(mov_avg,start = past, end = now)
+            MA20 = mov_avg_data['Adj Close'].rolling(20).mean()
+            MA50 = mov_avg_data['Adj Close'].rolling(50).mean()
+            MA100 = mov_avg_data['Adj Close'].rolling(100).mean()
+
+            mov_adjClose = mov_avg_data['Adj Close']
+            
+            if duration == "20":
+                fig, axs = plt.subplots(2,2,figsize=(20,8),gridspec_kw ={'hspace': 0.2, 'wspace': 0.1})
+                axs[0,0].plot(mov_adjClose[arr[0]], label = 'closing')
+                axs[0,0].plot(MA20[arr[0]], label = 'MA20')
+                axs[0,0].set_title(arr[0])
+                axs[0,0].legend()
+
+                axs[0,1].plot(mov_adjClose[arr[1]], label = 'closing')
+                axs[0,1].plot(MA20[arr[1]], label = 'MA20')
+                axs[0,1].set_title(arr[1])
+                axs[0,1].legend()
+
+                axs[1,0].plot(mov_adjClose[arr[2]], label = 'closing')
+                axs[1,0].plot(MA20[arr[2]], label = 'MA20')
+                axs[1,0].set_title(arr[2])
+                axs[1,0].legend()
+
+                axs[1,1].plot(mov_adjClose[arr[3]], label = 'closing')
+                axs[1,1].plot(MA20[arr[3]], label = 'MA20')
+                axs[1,1].set_title(arr[3])
+                axs[1,1].legend()
+
+                plt.savefig("Moving_Average20" + str(arr))
+                return("Moving_Average20" + str(arr) + ".png")
+            
+            elif duration == "50":
+                fig, axs = plt.subplots(2,2,figsize=(20,8),gridspec_kw ={'hspace': 0.2, 'wspace': 0.1})
+                axs[0,0].plot(mov_adjClose[arr[0]], label = 'closing')
+                axs[0,0].plot(MA50[arr[0]], label = 'MA50')
+                axs[0,0].set_title(arr[0])
+                axs[0,0].legend()
+
+                axs[0,1].plot(mov_adjClose[arr[1]], label = 'closing')
+                axs[0,1].plot(MA50[arr[1]], label = 'MA50')
+                axs[0,1].set_title(arr[1])
+                axs[0,1].legend()
+
+                axs[1,0].plot(mov_adjClose[arr[2]], label = 'closing')
+                axs[1,0].plot(MA50[arr[2]], label = 'MA50')
+                axs[1,0].set_title(arr[2])
+                axs[1,0].legend()
+
+                axs[1,1].plot(mov_adjClose[arr[3]], label = 'closing')
+                axs[1,1].plot(MA50[arr[3]], label = 'MA50')
+                axs[1,1].set_title(arr[3])
+                axs[1,1].legend()
+
+                plt.savefig("Moving_Average50" + str(arr))
+                return("Moving_Average50" + str(arr) + ".png")
+
+            elif duration == "100":
+                fig, axs = plt.subplots(2,2,figsize=(20,8),gridspec_kw ={'hspace': 0.2, 'wspace': 0.1})
+                axs[0,0].plot(mov_adjClose[arr[0]], label = 'closing')
+                axs[0,0].plot(MA20[arr[0]], label = 'MA20')
+                axs[0,0].plot(MA50[arr[0]], label = 'MA50')
+                axs[0,0].plot(MA100[arr[0]], label = 'MA100')
+                axs[0,0].set_title(arr[0])
+                axs[0,0].legend()
+
+                axs[0,1].plot(mov_adjClose[arr[1]], label = 'closing')
+                axs[0,1].plot(MA20[arr[1]], label = 'MA20')
+                axs[0,1].plot(MA50[arr[1]], label = 'MA50')
+                axs[0,1].plot(MA100[arr[1]], label = 'MA100')
+                axs[0,1].set_title(arr[1])
+                axs[0,1].legend()
+
+                axs[1,0].plot(mov_adjClose[arr[2]], label = 'closing')
+                axs[1,0].plot(MA20[arr[2]], label = 'MA20')
+                axs[1,0].plot(MA50[arr[2]], label = 'MA50')
+                axs[1,0].plot(MA100[arr[2]], label = 'MA100')
+                axs[1,0].set_title(arr[2])
+                axs[1,0].legend()
+
+                axs[1,1].plot(mov_adjClose[arr[3]], label = 'closing')
+                axs[1,1].plot(MA20[arr[3]], label = 'MA20')
+                axs[1,1].plot(MA50[arr[3]], label = 'MA50')
+                axs[1,1].plot(MA100[arr[3]], label = 'MA100')
+                axs[1,1].set_title(arr[3])
+                axs[1,1].legend()
+
+                plt.savefig("Moving_Average100" + str(arr))
+                return("Moving_Average100" + str(arr) + ".png")
+
+            elif duration == "all":
+                fig, axs = plt.subplots(2,2,figsize=(20,8),gridspec_kw ={'hspace': 0.2, 'wspace': 0.1})
+                axs[0,0].plot(mov_adjClose[arr[0]], label = 'closing')
+                axs[0,0].plot(MA20[arr[0]], label = 'MA20')
+                axs[0,0].plot(MA50[arr[0]], label = 'MA50')
+                axs[0,0].plot(MA100[arr[0]], label = 'MA100')
+                axs[0,0].set_title(arr[0])
+                axs[0,0].legend()
+
+                axs[0,1].plot(mov_adjClose[arr[1]], label = 'closing')
+                axs[0,1].plot(MA20[arr[1]], label = 'MA20')
+                axs[0,1].plot(MA50[arr[1]], label = 'MA50')
+                axs[0,1].plot(MA100[arr[1]], label = 'MA100')
+                axs[0,1].set_title(arr[1])
+                axs[0,1].legend()
+
+                axs[1,0].plot(mov_adjClose[arr[2]], label = 'closing')
+                axs[1,0].plot(MA20[arr[2]], label = 'MA20')
+                axs[1,0].plot(MA50[arr[2]], label = 'MA50')
+                axs[1,0].plot(MA100[arr[2]], label = 'MA100')
+                axs[1,0].set_title(arr[2])
+                axs[1,0].legend()
+
+                axs[1,1].plot(mov_adjClose[arr[3]], label = 'closing')
+                axs[1,1].plot(MA20[arr[3]], label = 'MA20')
+                axs[1,1].plot(MA50[arr[3]], label = 'MA50')
+                axs[1,1].plot(MA100[arr[3]], label = 'MA100')
+                axs[1,1].set_title(arr[3])
+                axs[1,1].legend()
+
+                plt.savefig("Moving_AverageAll" + str(arr))
+                return("Moving_AverageAll" + str(arr) +".png")
 
 # events for the bot to process and run
 @client.event
@@ -103,10 +229,6 @@ async def on_message(message):
     await client.process_commands(message)
 
 @client.command()
-async def test(ctx,arg):
-    await ctx.channel.send(arg)
-
-@client.command()
 async def heatmap(ctx):
 
     await ctx.send("enter four cryptocurrencies for heatmap comparisons")
@@ -128,6 +250,40 @@ async def heatmap(ctx):
     else:
         await ctx.send("Please choose four viable cryptocurrencies")
 
+@client.command()
+async def movingaverage(ctx):
+    await ctx.send("to see the moving averages for four different cryptocurrencies, enter your chosen four now")
+    
+    def split_string(string):
+        a = string.split(",")
+        return a
+    
+    def check_author(msg):
+        return msg.author == ctx.author and msg.channel == ctx.channel
+
+    response = await client.wait_for("message", check=check_author)
+    values_given = split_string(response.content)
+
+    if (values_given)[0] in symbols and  (values_given)[1] in symbols and (values_given)[2] in symbols and \
+    (values_given)[3] in symbols:
+        await ctx.send("What duration should the moving average be?(options include 20, 50, and 100)")
+        new_response = await client.wait_for("message", check = check_author)
+
+        if new_response.content == "20":
+            await ctx.send(file = discord.File(str(Crypto.generate_moving_average(values_given,"20"))))
+        
+        elif new_response.content == "50":
+            await ctx.send(file = discord.File(str(Crypto.generate_moving_average(values_given,"50"))))
+        
+        elif new_response.content == "100":
+            await ctx.send(file = discord.File(str(Crypto.generate_moving_average(values_given,"100"))))
+        
+        elif new_response.content == "all":
+            await ctx.send(file = discord.File(str(Crypto.generate_moving_average(values_given,"all"))))
+        
+        else:
+            await ctx.send("please choose a viable option")
+            return
 
 client.run(token)
 
